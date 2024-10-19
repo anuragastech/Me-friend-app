@@ -1,9 +1,28 @@
 const express = require('express');
 const app = express();  
 const connectDB =require("./config/database")
-  
-app.use((req,res)=>{
-    res.send("hello")
+  const User=require("./models/user")
+// app.use("/let",(req,res)=>{
+//     res.send("hello")
+// })
+
+app.post("/signup",async(req,res)=>{
+    const user=new User({
+firstName:"advint",
+lastName:"lint",
+emailId:"adcint@gmial.com",
+password:"asfhjjfijfejriefjf",
+
+
+    })
+    await user.save()
+    try{
+        res.send("success")    
+
+    }catch(err){
+console.log("data not added");
+
+    }
 })
 
 connectDB()
