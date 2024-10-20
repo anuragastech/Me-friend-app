@@ -3,3 +3,7 @@ node_modules/
 
 # Ignore the database.js file inside the config folder
 config/database.js
+
+# Ignore the auth.js file inside the middleware folder
+
+middleware/auth.js
