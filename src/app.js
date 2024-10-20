@@ -18,6 +18,7 @@ console.log("data not added");
     }
 })
 
+
 connectDB()
   .then(() => {
     console.log("Connected to the database");
