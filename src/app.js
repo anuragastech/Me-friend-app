@@ -5,14 +5,9 @@ const connectDB =require("./config/database")
 app.use(express.json());
 
 app.post("/signup",async(req,res)=>{
-    const user=new User({
-firstName:"advint",
-lastName:"lint",
-emailId:"adcint@gmial.com",
-password:"asfhjjfijfejriefjf",
-
-
-    })
+    console.log(req.body);
+    
+    const user=new User(req.body)
     await user.save()
     try{
         res.send("success")        
