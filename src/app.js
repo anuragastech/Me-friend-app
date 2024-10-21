@@ -8,12 +8,14 @@ const bcrypt=require("bcryptjs")
 app.use(express.json());
 
 app.post("/signup",async(req,res)=>{
-    validateSignupData(req);
+    // validateSignupData(req);
     console.log(req.body);
-    const {fileName,lastName,emailId,age,skill}=req.body
+    const {firstName,lastName,emailid,age,skill,password,gender}=req.body
     const passwordHash=await bcrypt.hash(password,10)
+    console.log(passwordHash);
+    
     const user=new User({
-        fileName,lastName,emailId,password:passwordHash,age,skill
+        firstName,lastName,emailId:emailid,password:passwordHash,age,skill,gender
     })
     await user.save()
     try{
@@ -24,6 +26,31 @@ console.log("data not added");
 
     }
 })
+
+
+app.post("/login", async (req, res) => {
+  const { emailid, password } = req.body;
+
+  try {
+  
+    const match = await User.findOne({ emailId: emailid }); 
+
+    if (!match) {
+      return res.status(404).send({ error: "Email ID not found in the database" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, match.password);
+
+    if (isPasswordValid) {
+      res.send({ message: "Login successful" });
+    } else {
+      return res.status(401).send({ error: "Password is incorrect" });
+    }
+  } catch (err) {
+    console.error("Error during login:", err);
+    res.status(500).send({ error: "Internal server error" });
+  }
+});
 
 app.patch("/user/:userId", async (req, res) => {
     const userId = req.params.userId;
