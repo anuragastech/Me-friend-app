@@ -2,10 +2,13 @@ const express = require('express');
 const app = express();  
 const connectDB =require("./config/database")
   const User=require("./models/user")
-const validateSignupData=require("./utils/validate")
+const {validateSignupData}=require("./utils/validate")
 const bcrypt=require("bcryptjs")
+const cookieParser = require('cookie-parser');
+const jwt=require("jsonwebtoken")
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup",async(req,res)=>{
     // validateSignupData(req);
@@ -32,19 +35,35 @@ app.post("/login", async (req, res) => {
   const { emailid, password } = req.body;
 
   try {
-  
+
+
+
+//     const cookies = req.cookies; 
+//     const { token } = cookies; 
+// console.log(cookies);
+// console.log(token);          
+
+
+    
     const match = await User.findOne({ emailId: emailid }); 
 
     if (!match) {
-      return res.status(404).send({ error: "Email ID not found in the database" });
+      return res.status(404).send({ error: "invalid credential" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, match.password);
 
     if (isPasswordValid) {
+
+      const token=await jwt.sign({_id:match._id},"neeeathadaamoone")
+      console.log(token);
+      
+      res.cookie("token",token)
+
+
       res.send({ message: "Login successful" });
     } else {
-      return res.status(401).send({ error: "Password is incorrect" });
+      return res.status(401).send({ error: "invalid credential" });
     }
   } catch (err) {
     console.error("Error during login:", err);
