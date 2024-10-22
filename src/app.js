@@ -6,6 +6,7 @@ const {validateSignupData}=require("./utils/validate")
 const bcrypt=require("bcryptjs")
 const cookieParser = require('cookie-parser');
 const jwt=require("jsonwebtoken")
+const { userAuth } = require('./middleware/auth');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -56,7 +57,7 @@ app.post("/login", async (req, res) => {
     if (isPasswordValid) {
 
       const token=await jwt.sign({_id:match._id},"neeeathadaamoone")
-      console.log(token);
+      // console.log(token);
       
       res.cookie("token",token)
 
@@ -104,7 +105,9 @@ app.patch("/user/:userId", async (req, res) => {
     }
   });
   
-
+app.get("/profile",userAuth,async(req,res)=>{
+  res.send("okokkok")
+})
 
 
 
