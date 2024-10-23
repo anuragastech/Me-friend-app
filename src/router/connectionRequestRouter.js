@@ -44,14 +44,42 @@ router.post("/request/send/:status/interested/:toUser_id", userAuth, async (req,
 
         return res.json({ message: "Connection request sent successfully", data });
     } catch (error) {
-        console.error(error); 
         return res.status(500).json({ message: "An error occurred" }); 
     }
 });
 
 
-router.post("",userAuth,async(req,res)=>{
+router.post("/request/review/:status/:request_id",userAuth,async(req,res)=>{
+    try{
+ 
+    const loggedInUser=req.user;
+    const {status,request_id}=req.params;
+    
+    const allowedStatus=["accepted","rejected"]
+
+    if(!allowedStatus.includes(status)){
+        res.status(400).send.json({messege:"status not allowed "})
+    }
+
+    const connectionRequest=new connectionRequestModel.findOne({
+        _id:request_id,
+        toUserId:loggedInUser._id ,
+        status:"interested",
+    })
+    if(!connectionRequest){
+        res.status(400).send.json({messege:"connection request  error"})
+    }
+   
+    connectionRequest.status=status
+  const data=  await connectionRequest.save()
+
+  return res.json({ message: "Connection request Accepted successfully", data });
+
+}catch(error){
+    
+        return res.status(500).json({ message: "An error occurred" }); }
 
 })
+
 
 module.exports = router;

@@ -65,6 +65,20 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
+router.post("/logout", userAuth, async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    
+    res.cookie("token", null, {
+      expires: new Date(Date.now()),
+    
+    });
+    
+    res.status(200).send({ message: "Logout successful" });
+    
+  } catch (error) {
+    res.status(500).json({ message: "Logout error" });
+  }
+});
 
 module.exports = router;
