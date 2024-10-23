@@ -2,7 +2,7 @@ const express=require("express");
 const router=express.Router()
 const User=require("../models/user")
 const { userAuth } = require('../middleware/auth');
-
+const validateEditProfileData=require("../utils/validate")
 
 
 
@@ -39,6 +39,31 @@ router.patch("/user/:userId", async (req, res) => {
       res.status(500).send({ error: "Failed to update the user." }); 
     }
   });
+
+
+router.patch("/profile/edit",userAuth,async(req,re)=>{
+    try{
+if(validateEditProfileData(req)){
+    throw new error("invalid of edit request")
+
+}
+const loggedInUser=req.user 
+Object.keys(req.body).forEach((key) => {
+    loggedInUser[key] = req.body[key];
+});
+
+await loggedInUser.save();
+
+res.json({ message: `${loggedInUser.firstName}, your profile has been updated.` });
+
+    }catch(err){
+        res.status(400).json({
+            error: error.message || "Something went wrong while updating the profile"
+        });
+    }
+})
+
+
   
 router.get("/profile",userAuth,async(req,res)=>{
   res.send("okokkok")
