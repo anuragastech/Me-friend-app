@@ -3,7 +3,6 @@ const User=require("../models/user")
 
 const dotenv = require("dotenv");
 
-// Load environment variables from .env
 dotenv.config();
 
 

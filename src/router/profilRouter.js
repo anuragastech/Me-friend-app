@@ -3,44 +3,44 @@ const router=express.Router()
 const User=require("../models/user")
 const { userAuth } = require('../middleware/auth');
 const {validateEditProfileData}=require("../utils/validate")
+const bcrypt= require("bcryptjs")
 
 
+router.patch("/profile/password/edit", userAuth, async (req, res) => {
+    const { password } = req.body; 
 
+    try {
+        const loggedInUser = req.user; 
 
-// router.patch("/user/:userId", async (req, res) => {
-//     const userId = req.params.userId;
-//     const data = req.body;
-//   console.log(userId);
-  
-//     try {
-//       const ALLOWED_UPDATES = ["firstName", "lastName", "password", "age", "gender", "skill"]; 
-  
-//       const isUpdateAllowed = Object.keys(data).every((key) =>
-//         ALLOWED_UPDATES.includes(key)
-//       );
-  
-//       if (!isUpdateAllowed) {
-//         return res.status(400).send({ error: "Invalid updates!" });
-//       }
-  
-//       const user = await User.findByIdAndUpdate(userId, data, {
-//         returnDocument:"before",      
-//         runValidators: true, 
+        console.log(loggedInUser);
 
-//       });
-//   console.log(user);
-  
-//       if (!user) {
-//         return res.status(404).send({ error: "User not found!" });
-//       }
-  
-//       res.status(200).send(user); 
-//     } catch (error) {
-//       res.status(500).send({ error: "Failed to update the user." }); 
-//     }
-//   });
+        if (!loggedInUser) {
+            return res.status(404).json({ error: "User not found!" });
+        }
 
+        const ALLOWED_UPDATES = ["password"];
+        const isUpdateAllowed = Object.keys(req.body).every((key) =>
+            ALLOWED_UPDATES.includes(key)
+        );
 
+        if (!isUpdateAllowed) {
+            return res.status(400).json({ error: "Invalid updates!" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        loggedInUser.password = hashedPassword;
+
+        const updatePasswordUser = await loggedInUser.save();
+
+        console.log(updatePasswordUser);
+
+        res.status(200).json({ message: "Password updated successfully!", user: updatePasswordUser });
+    } catch (error) {
+        console.error(error); 
+        res.status(500).json({ error: "Failed to update the user." });
+    }
+});
 
 
 router.patch("/profile/edit",userAuth,async(req,res)=>{
