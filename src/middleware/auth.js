@@ -1,6 +1,12 @@
 const jwt=require("jsonwebtoken")
 const User=require("../models/user")
 
+const dotenv = require("dotenv");
+
+// Load environment variables from .env
+dotenv.config();
+
+
 const userAuth = async (req, res, next) => {
     try {
         const cookies = req.cookies;
@@ -11,7 +17,7 @@ const userAuth = async (req, res, next) => {
         }
 
 
-        const decodeObj = await jwt.verify(token, "neeeathadaamoone");
+        const decodeObj = await jwt.verify(token,  process.env.JWT_SECRET);
         const { _id } = decodeObj;
 
         const user = await User.findById(_id);
