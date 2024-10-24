@@ -12,8 +12,6 @@ router.patch("/profile/password/edit", userAuth, async (req, res) => {
     try {
         const loggedInUser = req.user; 
 
-        console.log(loggedInUser);
-
         if (!loggedInUser) {
             return res.status(404).json({ error: "User not found!" });
         }
