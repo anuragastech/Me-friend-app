@@ -66,7 +66,7 @@ res.json({ message: `${loggedInUser.firstName}, your profile has been updated.` 
     }
 })
 
-router.get("/profile",userAuth,async(req,res)=>{
+router.get("/profile/view",userAuth,async(req,res)=>{
     try{
 const loggedInUser=req.user 
 
@@ -84,10 +84,6 @@ res.json({message:"succesfull",profileData})
 
 
 
-  
-router.get("/profile",userAuth,async(req,res)=>{
-  res.send("okokkok")
-})
 
 
 module.exports = router;
