@@ -62,9 +62,38 @@ res.json({messege:"success",data})
         res.status(500).json({message:"connection not found  error"})
     }
 })
-
-
-
+router.get("/feed", userAuth, async (req, res) => {
+    const loggedInUser = req.user;
+  
+    try {
+      const connectionRequest = await connectionRequestModel.find({
+        $or: [
+          { fromUserId: loggedInUser._id },
+          { toUserId: loggedInUser._id }
+        ]
+      });
+  
+      const hideUsersFromFeed = new Set();
+  
+      connectionRequest.forEach((req) => {
+        hideUsersFromFeed.add(req.fromUserId.toString());
+        hideUsersFromFeed.add(req.toUserId.toString());
+      });
+  
+      const users = await User.find({
+        $and: [
+          { _id: { $nin: Array.from(hideUsersFromFeed) } },
+          { _id: { $ne: loggedInUser._id } }
+        ]
+      }).select(USER_SAFE_Data); 
+  
+      res.send(users);
+      
+    } catch (error) {
+      res.status(500).json({ message: "Unable to fetch data" });
+    }
+  });
+  
 
 
 
