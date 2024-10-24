@@ -66,7 +66,21 @@ res.json({ message: `${loggedInUser.firstName}, your profile has been updated.` 
     }
 })
 
+router.get("/profile",userAuth,async(req,res)=>{
+    try{
+const loggedInUser=req.user 
 
+
+const profileData =loggedInUser
+if(!profileData){
+    res.status(400).json({message:" error in fetching data  "})
+}
+
+res.json({message:"succesfull",profileData})
+    }catch(error){
+        res.status(500).json({message:" profile  data not available "})
+    }
+})
 
 
 

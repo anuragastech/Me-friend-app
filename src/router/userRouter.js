@@ -65,6 +65,9 @@ res.json({messege:"success",data})
 router.get("/feed", userAuth, async (req, res) => {
     const loggedInUser = req.user;
   
+    const page=parseInt(req.query.page);
+    const limit=parseInt(req.query.limit);
+    const skip=(page-1)*limit;
     try {
       const connectionRequest = await connectionRequestModel.find({
         $or: [
@@ -85,7 +88,7 @@ router.get("/feed", userAuth, async (req, res) => {
           { _id: { $nin: Array.from(hideUsersFromFeed) } },
           { _id: { $ne: loggedInUser._id } }
         ]
-      }).select(USER_SAFE_Data); 
+      }).select(USER_SAFE_Data).skip(skip).limit(limit)
   
       res.send(users);
       
