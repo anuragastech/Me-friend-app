@@ -11,6 +11,8 @@ const {validateSignupData}=require("../utils/validate")
 router.post("/signup",async(req,res)=>{
     // validateSignupData(req);
     console.log(req.body);
+
+    try{
     const {firstName,lastName,emailid,age,skill,password,gender}=req.body
     const passwordHash=await bcrypt.hash(password,10)
     console.log(passwordHash);
@@ -19,7 +21,7 @@ router.post("/signup",async(req,res)=>{
         firstName,lastName,emailId:emailid,password:passwordHash,age,skill,gender
     })
     await user.save()
-    try{
+  
         res.send("success")        
 
     }catch(err){
